@@ -8,7 +8,11 @@ st.title("PDF → Word 自動轉換工具")
 # 上傳 PDF
 pdf_file = st.file_uploader("請上傳 PDF 檔案", type=["pdf"])
 
-st.title("檔案內是否包含CB證書：")
+
+st.markdown(
+    "<h3 style='font-size:24px;'>檔案內是否包含CB證書：</h3>", 
+    unsafe_allow_html=True
+)
 # 勾選要產出的格式
 certif = st.checkbox("CB with Certif.")
 
@@ -45,5 +49,6 @@ if pdf_file and (gma_filter or saa_filter or stcoa_filter):
                         file_name=word_output_name,
                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     )
+
 
 
