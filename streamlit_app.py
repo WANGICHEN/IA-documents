@@ -16,6 +16,10 @@ st.markdown(
 # 勾選要產出的格式
 certif = st.checkbox("CB with Certif.")
 
+st.markdown(
+    "<h3 style='font-size:24px;'>勾選產出的格式：</h3>", 
+    unsafe_allow_html=True
+)
 # 勾選要產出的格式
 gma_filter = st.checkbox("產出 GMA Word")
 saa_filter = st.checkbox("產出 SAA Word")
@@ -49,6 +53,7 @@ if pdf_file and (gma_filter or saa_filter or stcoa_filter):
                         file_name=word_output_name,
                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     )
+
 
 
 
