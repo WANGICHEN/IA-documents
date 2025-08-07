@@ -3,6 +3,8 @@ from docx import Document
 import re
 
 def find_info(text, keyword):
+    if not isinstance(text, str):
+        return None
     lines = text.splitlines()
     for line in range(len(lines)):
         if keyword.lower() in lines[line].lower():
@@ -103,4 +105,5 @@ def run(pdf_path, word_path):
                     cell.text = cell.text.replace('{factory_name}', '\n'.join([f"{i+1}. {item}" for i, item in enumerate(factory_name)]))
                 if '{factory_info}' in cell.text:
                     cell.text = cell.text.replace('{factory_info}', '\n'.join([f"{i+1}. {item}" for i, item in enumerate(factory_info)]))
+
     return doc
