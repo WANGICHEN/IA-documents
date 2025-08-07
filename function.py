@@ -3,9 +3,6 @@ from docx import Document
 import re
 
 def find_info(text, keyword):
-    if not isinstance(text, str):
-        text = ''
-        return text
     lines = text.splitlines()
     for line in range(len(lines)):
         if keyword.lower() in lines[line].lower():
@@ -64,19 +61,23 @@ def ectract_factory_name_address(info):
 
     return factory_name, factory_info
 
-def run(pdf_path, word_path):
+def run(pdf_path, word_path, certif):
+    if certif is True:
+        page = 2
+    else:
+        page = 0
     with pdfplumber.open(pdf_path) as pdf:
-        report_number = find_info(extract_field_from_table(pdf.pages[0], "Report Number"), "Report Number")
-        applicant_name = find_info(extract_field_from_table(pdf.pages[0], "Applicant’s name"), "Applicant’s name")
-        address = find_info(extract_field_from_table(pdf.pages[0], "Address"), "Address")
-        date = find_info(extract_field_from_table(pdf.pages[0], "Date of issue"), "Date of issue")
-        standard = find_info(extract_field_from_table(pdf.pages[0], "Standard"), "Standard")
-        issuing_lab = find_info(extract_field_from_table(pdf.pages[0], "Name of Testing Laboratory"), "Name of Testing Laboratory")
+        report_number = find_info(extract_field_from_table(pdf.pages[page], "Report Number"), "Report Number")
+        applicant_name = find_info(extract_field_from_table(pdf.pages[page], "Applicant’s name"), "Applicant’s name")
+        address = find_info(extract_field_from_table(pdf.pages[page], "Address"), "Address")
+        date = find_info(extract_field_from_table(pdf.pages[page], "Date of issue"), "Date of issue")
+        standard = find_info(extract_field_from_table(pdf.pages[page], "Standard"), "Standard")
+        issuing_lab = find_info(extract_field_from_table(pdf.pages[page], "Name of Testing Laboratory"), "Name of Testing Laboratory")
 
 
-        model_number = find_info(extract_texts_from_pdf(pdf.pages[:2]), "Model/Type reference")
-        description_of_product = find_info(extract_texts_from_pdf(pdf.pages[:2]), "Test item description")
-        rating = find_info(extract_texts_from_pdf(pdf.pages[:2]), "Ratings")
+        model_number = find_info(extract_texts_from_pdf(pdf.pages[:page + 2]), "Model/Type reference")
+        description_of_product = find_info(extract_texts_from_pdf(pdf.pages[:page + 2]), "Test item description")
+        rating = find_info(extract_texts_from_pdf(pdf.pages[:page + 2]), "Ratings")
 
         factory_name, factory_info = ectract_factory_name_address(extract_field_from_table(pdf.pages, "Name and address of factory"))
 
@@ -108,5 +109,6 @@ def run(pdf_path, word_path):
                     cell.text = cell.text.replace('{factory_info}', '\n'.join([f"{i+1}. {item}" for i, item in enumerate(factory_info)]))
 
     return doc
+
 
 
