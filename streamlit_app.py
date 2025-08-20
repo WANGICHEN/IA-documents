@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import function
 import tempfile
+from io import BytesIO
 
 st.title("PDF → Word 自動轉換工具")
 
@@ -40,21 +41,26 @@ if pdf_file and (gma_filter or saa_filter or stcoa_filter):
             ("STCOA", stcoa_filter, "format/STCOA.docx")
         ]:
             if check:
-                word_output_name = pdf_file.name.replace(".pdf", f"_{name}.docx")
-                output_path = os.path.join(tmpdir, word_output_name)
+                # word_output_name = pdf_file.name.replace(".pdf", f"_{name}.docx")
+                # output_path = os.path.join(tmpdir, word_output_name)
+
+                base, _ = os.path.splitext(pdf_file.name)   # e.g. "xxx"
+                word_output_name = f"{base}_{name}.docx"
 
                 doc = function.run(pdf_path, template, certif)
-                doc.save(output_path)
+                # doc.save(output_path)
+                # 存到記憶體
+                buf = BytesIO()
+                doc.save(buf)           # 若 doc 是 docxtpl 或 python-docx 的 Document() 都可這樣存
+                buf.seek(0)
 
-                with open(output_path, "rb") as out_file:
-                    st.download_button(
-                        label=f"下載 {name} Word 檔",
-                        data=out_file,
-                        file_name=word_output_name,
-                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    )
-
-
+                # with open(output_path, "rb") as out_file:
+                st.download_button(
+                    label=f"下載 {name} Word 檔",
+                    data=buf,
+                    file_name=word_output_name,
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                )
 
 
 
